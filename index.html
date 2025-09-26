@@ -1,1 +1,390 @@
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบนิติบุคคลหมู่บ้าน</title>
+  <style>
+    body {margin:0;font-family:"Prompt",sans-serif;background:#f5f7fa;color:#333;}
+    header {background:#2c3e50;color:#fff;padding:15px;text-align:center;font-size:1.3rem;font-weight:bold;}
+    .container {display:flex;min-height:100vh;}
+    nav {width:220px;background:#34495e;padding-top:20px;}
+    nav ul {list-style:none;padding:0;margin:0;}
+    nav ul li {margin:15px 0;}
+    nav ul li a {color:#ecf0f1;text-decoration:none;padding:10px 20px;display:block;transition:0.3s;cursor:pointer;}
+    nav ul li a:hover {background:#1abc9c;border-radius:5px;}
+    nav ul li a.active {background:#1abc9c;border-radius:5px;}
+    main {flex:1;padding:20px;}
+    .card {background:#fff;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    .card h2 {margin-top:0;font-size:1.2rem;color:#2c3e50;}
+    .card h3 {margin-top:15px;font-size:1.1rem;color:#27ae60;}
+    .page {display:none;}
+    .page.active {display:block;}
+    /* Table styles */
+    table {width:100%;border-collapse:collapse;margin-top:10px;}
+    th, td {border:1px solid #ccc;padding:8px;text-align:left;}
+    th {background:#2c3e50;color:#fff;}
+    /* Form styles */
+    form {background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    label {display:block;margin:10px 0 5px;}
+    input, textarea, select {width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box;}
+    button {margin-top:15px;padding:10px 15px;background:#1abc9c;border:none;color:#fff;border-radius:5px;cursor:pointer;}
+    button:hover {background:#16a085;}
+    footer {text-align:center;padding:15px;background:#2c3e50;color:#fff;}
+    .success-message {
+      background:#d4edda;
+      color:#155724;
+      padding:10px;
+      border-radius:5px;
+      margin:10px 0;
+      display:none;
+    }
+    .resident-detail {
+      border: 2px solid #3498db;
+      background: #ecf0f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .resident-detail h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .detail-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ecf0f1;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .amount {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    .status-paid {
+      color: #27ae60;
+      font-weight: bold;
+    }
+    .status-pending {
+      color: #f39c12;
+      font-weight: bold;
+    }
+    .qr-placeholder {
+      width: 40px;
+      height: 40px;
+      background: #bdc3c7;
+      display: inline-block;
+      border-radius: 3px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <header id="page-header"> Smart Niti เคริซ ทาวน์ 4 จตุโชติ-หทัยราษฎร์</header>
+  <div class="container">
+    <nav>
+      <ul>
+        <li><a onclick="showPage('home')" class="nav-link active">🏠 หน้าแรก</a></li>
+        <li><a onclick="showPage('news')" class="nav-link">📢 ข่าวสารหมู่บ้าน</a></li>
+        <li><a onclick="showPage('residents')" class="nav-link">👥 ข้อมูลลูกบ้าน</a></li>
+        <li><a onclick="showPage('repair')" class="nav-link">🛠 แจ้งซ่อม</a></li>
+        <li><a onclick="showPage('payment')" class="nav-link">💳 ระบบจ่ายเงิน</a></li>
+        <li><a onclick="showPage('rules')" class="nav-link">📜 กฎระเบียบหมู่บ้าน</a></li>
+      </ul>
+    </nav>
+    <main>
+      <!-- หน้าแรก -->
+      <div id="home" class="page active">
+        <div class="card">
+          <h2>ยินดีต้อนรับ</h2>
+          <p>นี่คือระบบนิติบุคคลหมู่บ้าน เพื่อความสะดวกของลูกบ้านทุกท่าน</p>
+          <p>สามารถใช้เมนูด้านซ้ายเพื่อเข้าถึงบริการต่าง ๆ ของหมู่บ้าน</p>
+        </div>
+        <div class="card">
+          <h2>สถิติหมู่บ้าน</h2>
+          <p>📊 จำนวนลูกบ้าน: 70 หลัง (327/1 - 327/70)</p>
+          <p>🔧 เรื่องแจ้งซ่อมที่รอดำเนินการ: 0 เรื่อง</p>
+          <p>💰 ยอดชำระค่าส่วนกลางเดือนนี้: 6,200 บาท</p>
+          <p>⏳ ยอดค้างชำระ: 10,500 บาท</p>
+        </div>
+      </div>
+      <!-- ข่าวสารหมู่บ้าน -->
+      <div id="news" class="page">
+        <div class="card">
+          <h2>ประกาศล่าสุด</h2>
+          <p><strong>🚰 ปิดน้ำวันที่ 20 ก.ย. 68</strong></p>
+          <p>เวลา 9.00 - 15.00 น. เพื่อซ่อมแซมระบบประปา</p>
+          <p><small>ประกาศเมื่อ: 18 กันยายน 2568</small></p>
+        </div>
+        <div class="card">
+          <h2>กิจกรรมที่จะมาถึง</h2>
+          <p><strong>🎉 งานปีใหม่หมู่บ้าน</strong></p>
+          <p>วันที่ 31 ธันวาคม 2568 เวลา 18.00 น.</p>
+          <p>สถานที่: บริเวณศาลาหมู่บ้าน</p>
+          <p><small>อัพเดทเมื่อ: 16 กันยายน 2568</small></p>
+        </div>
+        <div class="card">
+          <h2>ข่าวสารอื่น ๆ</h2>
+          <p>📋 ประชุมคณะกรรมการหมู่บ้าน ทุกวันเสาร์แรกของเดือน</p>
+          <p>🌱 โครงการปลูกต้นไม้ในหมู่บ้าน กำลังดำเนินการ</p>
+        </div>
+      </div>
+      <!-- ข้อมูลลูกบ้าน -->
+      <div id="residents" class="page">
+        <div class="resident-detail">
+          <h2>ข้อมูลลูกบ้าน 327/10 <span class=></span></h2>
+          <div class="detail-section">
+            <h3>✅ ยอดค้างจ่าย + ดอกเบี้ยปรับอัตโนมัติ</h3>
+            <div class="detail-row">
+              <span><strong> ค่าส่วนกลางค้างชำระ (3 เดือน)</strong></span>
+              <span class="amount">10,500 บาท</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>✅ ประวัติการจ่ายย้อนหลัง</h3>
+            <div class="detail-row">
+              <span><strong>13 มกราคม 2567</strong></span>
+              <span class="status-paid">6,200 บาท</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>✅ ข้อมูลบ้าน</h3>
+            <div class="detail-row">
+              <span><strong>จำนวนผู้อยู่อาศัย</strong></span>
+              <span>3</span>
+            </div>
+            <div class="detail-row">
+              <span><strong>การเลี้ยงสัตว์</strong></span>
+              <span>มี (สุนัข)</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>✅ ข้อมูลรถ</h3>
+            <div class="detail-row">
+              <span><strong>ทะเบียน</strong></span>
+              <span>กข 1234</span>
+            </div>
+            <div class="detail-row">
+              <span><strong>ที่จอด</strong></span>
+              <span>B2</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>✅ ข้อมูลผู้เช่า/ผู้พักอาศัย</h3>
+            <div class="detail-row">
+              <span><strong>ชื่อ</strong></span>
+              <span>ป.ก.</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>รายชื่อลูกบ้านทั้งหมด</h2>
+          <table>
+            <tr>
+              <th>บ้านเลขที่</th>
+              <th>ชื่อ-สกุล</th>
+              <th>เบอร์โทร</th>
+              <th>สถานะ</th>
+            </tr>
+            <tr>
+              <td>327/1</td>
+              <td>ป.ก.</td>
+              <td>081-234-5678</td>
+              <td><span class="status-pending">⏳ ค้างชำระ 10,500 บาท</span></td>
+            </tr>
+            <tr>
+              <td>327/2</td>
+              <td>นางสาวสุดา แสนดี</td>
+              <td>089-555-8888</td>
+              <td><span class="status-paid">✅ ชำระแล้ว</span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <!-- แจ้งซ่อม -->
+      <div id="repair" class="page">
+        <h2>ฟอร์มแจ้งซ่อม</h2>
+        <div class="success-message" id="repair-success">
+          ✅ แจ้งซ่อมเรียบร้อยแล้ว เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง
+        </div>
+        <form onsubmit="submitRepair(event)">
+          <label>ชื่อผู้แจ้ง *</label>
+          <input type="text" id="repair-name" placeholder="กรอกชื่อ-สกุล" required>
+          <label>บ้านเลขที่ *</label>
+          <input type="text" id="repair-address" placeholder="เช่น 101/5" required>
+          <label>เบอร์โทรติดต่อ *</label>
+          <input type="tel" id="repair-phone" placeholder="เช่น 081-234-5678" required>
+          <label>ประเภทปัญหา *</label>
+          <select id="repair-type" required>
+            <option value="">เลือกประเภทปัญหา</option>
+            <option value="electric">ไฟฟ้า</option>
+            <option value="water">ประปา</option>
+            <option value="road">ถนน</option>
+            <option value="security">ระบบรักษาความปลอดภัย</option>
+            <option value="other">อื่น ๆ</option>
+          </select>
+          <label>รายละเอียด *</label>
+          <textarea rows="4" id="repair-details" placeholder="อธิบายปัญหาอย่างละเอียด..." required></textarea>
+          <label>ระดับความเร่งด่วน</label>
+          <select id="repair-priority">
+            <option value="normal">ปกติ</option>
+            <option value="urgent">เร่งด่วน</option>
+            <option value="emergency">ฉุกเฉิน</option>
+          </select>
+          <button type="submit">ส่งเรื่อง</button>
+        </form>
+      </div>
+      <!-- ระบบจ่ายเงิน -->
+      <div id="payment" class="page">
+        <h2>ชำระค่าส่วนกลาง</h2>
+        <div class="success-message" id="payment-success">
+          ✅ ชำระเงินเรียบร้อยแล้ว ขอบคุณค่ะ
+        </div>
+        <div class="card">
+          <h2>อัตราค่าส่วนกลาง</h2>
+          <h3>💳 การชำระรายเดือน</h3>
+          <p>💰 ค่าส่วนกลาง: 500 บาท/เดือน</p>
+          <p>🏠 ค่าบำรุงรักษา: 200 บาท/เดือน</p>
+          <p>🔐 ค่ารักษาความปลอดภัย: 300 บาท/เดือน</p>
+          <p><strong>รวม: 1,000 บาท/เดือน</strong></p>
+          <hr>
+          <h3>💳 การชำระราย 6 เดือน (ส่วนลด 5%)</h3>
+          <p>💰 ค่าส่วนกลาง: 2,850 บาท/6 เดือน</p>
+          <p>🏠 ค่าบำรุงรักษา: 1,140 บาท/6 เดือน</p>
+          <p>🔐 ค่ารักษาความปลอดภัย: 1,710 บาท/6 เดือน</p>
+          <p><strong>รวม: 5,700 บาท/6 เดือน</strong></p>
+        </div>
+        <form onsubmit="submitPayment(event)">
+          <label>ชื่อผู้ชำระ *</label>
+          <input type="text" id="payment-name" placeholder="กรอกชื่อ-สกุล" required>
+          <label>บ้านเลขที่ *</label>
+          <input type="text" id="payment-address" placeholder="เช่น 101/5" required>
+          <label>เบอร์โทรติดต่อ *</label>
+          <input type="tel" id="payment-phone" placeholder="เช่น 081-234-5678" required>
+          <label>จำนวนเงิน (บาท) *</label>
+          <input type="number" id="payment-amount" placeholder="กรอกจำนวนเงิน" min="1" required>
+          <label>ประเภทการชำระ *</label>
+          <select id="payment-type" required>
+            <option value="">เลือกประเภทการชำระ</option>
+            <option value="monthly">ค่าส่วนกลางรายเดือน</option>
+            <option value="sixmonth">ค่าส่วนกลางราย 6 เดือน</option>
+            <option value="maintenance">ค่าบำรุงรักษา</option>
+            <option value="parking">ค่าจอดรถส่วนกลาง</option>
+            <option value="other">อื่น ๆ</option>
+          </select>
+          <label>วิธีชำระเงิน *</label>
+          <select id="payment-method" required>
+            <option value="">เลือกวิธีชำระเงิน</option>
+            <option value="mobile">Mobile Banking</option>
+            <option value="qr">QR Code</option>
+            <option value="credit">บัตรเครดิต</option>
+            <option value="cash">เงินสด</option>
+          </select>
+          <button type="submit">ยืนยันการชำระ</button>
+        </form>
+      </div>
+      <!-- กฎระเบียบหมู่บ้าน -->
+      <div id="rules" class="page">
+        <div class="card">
+          <h2>ข้อบังคับหมู่บ้าน</h2>
+          <p><strong>📌 เรื่องสัตว์เลี้ยง</strong></p>
+          <p>• ห้ามเลี้ยงสัตว์ที่ก่อให้เกิดเสียงรบกวนเพื่อนบ้าน</p>
+          <p>• ต้องดูแลสัตว์เลี้ยงให้สะอาดและไม่ส่งกลิ่นเหม็น</p>
+          <p><strong>📌 เรื่องการจอดรถ</strong></p>
+          <p>• ห้ามจอดรถกีดขวางทางเข้า-ออกของเพื่อนบ้าน</p>
+          <p>• ห้ามจอดรถในพื้นที่ส่วนกลาง</p>
+          <p><strong>📌 เรื่องเสียง</strong></p>
+          <p>• ห้ามส่งเสียงดังรบกวนในช่วงเวลา 22.00-06.00 น.</p>
+          <p>• ห้ามเปิดเสียงเครื่องเสียงดัง</p>
+        </div>
+        <div class="card">
+          <h2>กฎการใช้พื้นที่ส่วนกลาง</h2>
+          <p>🏊‍♀️ <strong>สระว่ายน้ำ</strong> เปิด 06.00-20.00 น.</p>
+          <p>🏃‍♂️ <strong>ฟิตเนส</strong> เปิด 05.00-22.00 น.</p>
+          <p>🅿️ <strong>ที่จอดรถแขก</strong> จำกัด 2 ชั่วโมง</p>
+          <p>🛏️ <strong>ศาลาอเนกประสงค์</strong> ต้องจองล่วงหน้า</p>
+        </div>
+        <div class="card">
+          <h2>บทลงโทษ</h2>
+          <p>⚠️ การฝ่าฝืนครั้งแรก: ตักเตือน</p>
+          <p>💰 การฝ่าฝืนครั้งที่สอง: ปรับ 500 บาท</p>
+          <p>🚫 การฝ่าฝืนครั้งที่สาม: ปรับ 1,000 บาท</p>
+        </div>
+        <div class="card">
+          <h2>ติดต่อคณะกรรมการ</h2>
+          <p>📞 ผู้จัดการนิติ: 081-111-2222</p>
+          <p>📞 กรรมการหมู่บ้าน: 089-333-4444</p>
+          <p>📧 อีเมล: committee@village.com</p>
+          <p>🕐 สำนักงาน: จันทร์-ศุกร์ 08.00-17.00 น.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer>© 2025 หมู่บ้านตัวอย่าง - พัฒนาเพื่อความสะดวกของลูกบ้าน</footer>
+  <script>
+    function showPage(pageId) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => link.classList.remove('active'));
+      event.target.classList.add('active');
+      const headers = {
+        'home': '🏡 ระบบนิติบุคคลหมู่บ้าน',
+        'news': '📢 ข่าวสารหมู่บ้าน',
+        'residents': '👥 ข้อมูลลูกบ้าน',
+        'repair': '🛠 แจ้งซ่อม',
+        'payment': '💳 ระบบจ่ายเงิน',
+        'rules': '📜 กฎระเบียบหมู่บ้าน'
+      };
+      document.getElementById('page-header').textContent = headers[pageId];
+    }
+    function submitRepair(event) {
+      event.preventDefault();
+      document.getElementById('repair-success').style.display = 'block';
+      event.target.reset();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+      setTimeout(() => {
+        document.getElementById('repair-success').style.display = 'none';
+      }, 5000);
+    }
+    function submitPayment(event) {
+      event.preventDefault();
+      document.getElementById('payment-success').style.display = 'block';
+      event.target.reset();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+      setTimeout(() => {
+        document.getElementById('payment-success').style.display = 'none';
+      }, 5000);
+    }
+    document.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+        const form = event.target.closest('form');
+        if (form) {
+          event.preventDefault();
+          form.dispatchEvent(new Event('submit'));
+        }
+      }
+    });
+    function updateStats() {
+      console.log('กำลังอัพเดทสถิติ...');
+    }
+    setInterval(updateStats, 30000);
+    function searchResident() {
+      console.log('ฟีเจอร์ค้นหากำลังพัฒนา...');
+    }
+  </script>
+</body>
+</html>
